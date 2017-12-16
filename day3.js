@@ -1,6 +1,6 @@
 const target = 289326
 
-const findCoordinates = (target) => {
+const findDistance = (target) => {
   let ticker = 1
   let squareRoot = 3
   let square = 9
@@ -90,4 +90,95 @@ const findCoordinates = (target) => {
   }
 }
 
-console.log(findCoordinates(target))
+console.log(findDistance(target))
+
+const findLowestValue = (target) => {
+  const DIRECTIONS = {
+    'right': [1, 0],
+    'up': [0, 1],
+    'left': [-1, 0],
+    'down': [0, -1]
+  }
+
+  const CHECKS = {
+    'right': [
+      [-1, 0],
+      [-1, 1],
+      [0, 1],
+      [1, 1]
+    ],
+    'up': [
+      [0, -1],
+      [-1, -1],
+      [-1, 0],
+      [-1, 1]
+    ],
+    'left': [
+      [1, 0],
+      [1, -1],
+      [0, -1],
+      [-1, -1]
+    ],
+    'down': [
+      [0, 1],
+      [1, 1],
+      [1, 0],
+      [1, -1]
+    ]
+  }
+
+  const grid = {
+    '0,0': 1
+  }
+
+  let direction = 'right'
+  let currentLocation = [0, 0]
+  let currentValue = 1
+
+  while (currentValue < target) {
+    currentLocation[0] += DIRECTIONS[direction][0]
+    currentLocation[1] += DIRECTIONS[direction][1]
+
+    let sum = 0
+    for (let i = 0; i < 4; i++) {
+      let checkDiff = CHECKS[direction][i]
+      let checkCoord = `${currentLocation[0] + checkDiff[0]},${currentLocation[1] + checkDiff[1]}`
+
+      if (grid[checkCoord]) {
+        sum += grid[checkCoord]
+      }
+    }
+
+    grid[`${currentLocation[0]},${currentLocation[1]}`] = sum
+    currentValue = sum
+
+    switch (direction) {
+      case 'right':
+        if (!grid[`${currentLocation[0] + DIRECTIONS['up'][0]},${currentLocation[1] + DIRECTIONS['up'][1]}`]) {
+          direction = 'up'
+        }
+        break
+      case 'up':
+        if (!grid[`${currentLocation[0] + DIRECTIONS['left'][0]},${currentLocation[1] + DIRECTIONS['left'][1]}`]) {
+          direction = 'left'
+        }
+        break
+      case 'left':
+        if (!grid[`${currentLocation[0] + DIRECTIONS['down'][0]},${currentLocation[1] + DIRECTIONS['down'][1]}`]) {
+          direction = 'down'
+        }
+        break
+      case 'down':
+        if (!grid[`${currentLocation[0] + DIRECTIONS['right'][0]},${currentLocation[1] + DIRECTIONS['right'][1]}`]) {
+          direction = 'right'
+        }
+        break
+      default:
+        return
+    }
+  }
+
+  return currentValue
+}
+
+console.log(findLowestValue(target))
